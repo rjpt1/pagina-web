@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+	<title>CRUD VUE</title>
+  </head>
+  <body>
+    <div id="crud" class="container">
+	<div class="p-3 mb-2 bg-success text-white"><h1 v-text="mensaje"></h1></div>
+      
+      
+        <!-- {{userpost}}
+        {{posts}} -->
+
+        <saludo :varnombre="mensaje"></saludo>
+        <br>Nota: <input type="text" v-model="nota"></input>
+        <h2 style="color:green" v-if="nota && nota == 5">¡EXCELENTE!</h2>
+        <h2 style="color:blue" v-else-if="nota && nota >= 3 && nota < 5">¡paso!</h2>
+        <h2 style="color:red" v-else-if="nota && nota < 3 && nota >= 0">¡NO PASO!</h2>
+        <small v-else="">caracteres invalidos</small>
+
+        <hr>
+        <h1>CONSUMO DE APIS</h1>
+        <a href="#" v-if="mostrar" @click="mostrar=false">ocultar</a><a href="#" v-else @click="mostrar=true">mostrar</a>
+        <div v-if="mostrar">
+          <input type="text" placeholder="Buscar" v-model="bpost">
+          <table border="1" class="table">
+		  <thead class="thead-dark">
+            <tr>
+              <th>ID POST</th>
+              <th>NOMBRE USER</th>
+              <th>TITULO</th>
+              <th>CUERPO</th>
+            </tr>
+		</thead>
+            <tr v-for="(post, index) in postfiltrados" v-show="(pagina-1)*numero <= index && pagina*numero > index">
+              <td>{{ post.id }}</td>
+              <td><span v-for="user in userpost"><span v-if="user.id == post.userId">{{user.username}}</span></span></td>
+              <td>{{ post.title }}</td>
+              <td>{{ post.body }}</td>
+            </tr>
+          </table>
+          Paginar
+          <select v-model="numero">
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="3">Personalizar</option>
+          </select>
+          <input type="text" v-if="numero != 10 && numero != 20" v-model="numero">
+          <a href="#" @click.prevent="pagina=pagina-1" v-show="pagina != 1">Anterior</a>
+          <a href="#" @click.prevent="pagina=pagina+1" v-show="(pagina * numero)/(posts.length) < 1">Siguiente</a>
+      </div>
+        <!-- <span v-for="post in posts">
+          ID:{{ post.id }}<br>
+          NOMBRE USUARIO:<span v-for="user in userpost"><span v-if="user.id == post.userId">{{user.username}}</span></span><br>
+          TITULO:{{ post.title }} <br>
+          CUERPO:{{ post.body }} <br>
+          ________________________ <br>
+        </span> -->
+      <hr>
+      <form @submit.prevent="CrearSerie2" method="post">
+        Escriba para agregar una serie:<input v-model="nuevaserie">
+        <button name="button">Crear</button>
+      </form>
+
+      <h1>Listados Series</h1>
+      <ul v-if="series.length>0" >
+        <li v-for="(serie, indice) in ordenarserie">
+          <input v-if="eserie==indice" type="text" name="serie" v-model="series[indice]">
+          <span v-else>{{ indice }}-{{ serie }} </span>
+          <div v-if="eserie!=indice">
+            <a href="#" @click.prevent="eserie=indice">Editar</a>
+            <a href="#" @click.prevent="eliminarSerie(indice)">Eliminar</a>
+          </div>
+          <a v-else href="#" @click.prevent="eserie=null">Actualizar</a>
+        </li>
+      </ul>
+
+      <hr>
+      <form>
+          Escriba para agregar una serie:<input type="text" v-model="nuevaserie">
+          <input @click="CrearSerie(nuevaserie)" type="button" value="add">
+      </form>
+
+        <h1>Listados Series MIO</h1>
+        <ul v-for="(serie, indice) in series">
+          <li>
+            {{ serie }}({{ indice }}) <a href="#" @click.prevent="EliminarSerie(indice)">Eliminar</a>
+          </li>
+        </ul>
+
+        <hr>
+        <!-- Clase 27 abril -->
+        <input type="text" placeholder="Buscar..." v-model="bpelicula">
+        Buscar por:
+    		<select v-model="buscarPorCategoria" >
+    			<option value="1">Nombre</option>
+    			<option value="2">Estreno</option>
+    			<option value="3">Sinopsis</option>
+    		</select>
+        <!-- fin clase 27 abril -->
+        <form @submit.prevent="crearPelicula">
+          <h2>Agregar una pelicula.</h2>
+          <input type="text" v-model="nuevapelicula.id" placeholder="ID">
+          <input type="text" v-model="nuevapelicula.nombre" placeholder="NOMBRE">
+          <input type="text" v-model="nuevapelicula.estreno" placeholder="ESTRENO"><br>
+          <textarea type="text" v-model="nuevapelicula.sinopsis" placeholder="SINOPSIS"></textarea>
+          <button  name="button">Crear</button>
+        </form>
+        <h1>Tabla Peliculas </h1>
+        <table style="width:100%" border="1">
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Estreno</th>
+            <th>Sinopsis</th>
+            <th>Acciones</th>
+          </tr>
+          <tr v-for="(peli,indice) in peliculasfiltradas">
+            <td>
+              <span v-if="epelicula!=indice">{{peli.id}}</span>
+              <input v-else type="number" name="id" v-model="peli.id">
+            </td>
+            <td>
+              <span v-if="epelicula!=indice">{{peli.nombre}}</span>
+              <input v-else type="text" name="id" v-model="peli.nombre">
+            </td>
+            <td>
+              <span v-if="epelicula!=indice">{{peli.estreno}}</span>
+              <input v-else type="number" name="id" v-model="peli.estreno">
+            </td>
+            <td>
+              <span v-if="epelicula!=indice">{{peli.sinopsis}}</span>
+              <textarea v-else name="sinopsis" rows="8" cols="80" v-model="peli.sinopsis"></textarea>
+            </td>
+
+            <td >
+              <span v-if="epelicula!=indice">
+                <button  @click.prevent="eliminarPelicula(indice)" type="button" class="btn btn-dark">Eliminar</button>
+                <button  @click.prevent="epelicula=indice" type="button" class="btn btn-secondary">Editar</button>
+              </span>
+              <button v-else @click.prevent="epelicula=null" type="button" class="btn btn-secondary">Actualizar</button>
+            </td>
+          </tr>
+        </table>
+        <hr>
+
+        <input type="text" placeholder="Buscar..." v-model="buscarPelicula">
+
+        <form v-if="crear">
+          <h2>Agregar una pelicula.MIO.</h2>
+          Nombre:<input type="text" v-model="nuevoNombrePelicula">
+          Año de estreno:<input type="text" v-model="nuevoEstrenoPelicula">
+          Sinopsis:<input type="text" v-model="nuevoSinopsisPelicula">
+          <input  v-if="camposLlenosPeli" type="button" @click="CrearPelicula(nuevoNombrePelicula,nuevoEstrenoPelicula,nuevoSinopsisPelicula)" value="add">
+        </form>
+
+        <form v-if="!crear">
+          <h2>Editar la pelicula: {{peliculas[idpeli].nombre}}.</h2>
+          Nombre:<input type="text" v-model="peliculas[idpeli].nombre">
+          Año de estreno:<input type="text"  v-model="peliculas[idpeli].estreno">
+          Sinopsis:<input type="text" v-model="peliculas[idpeli].sinopsis">
+          <input type="button" @click="EditarPelicula(peliculas[idpeli].nombre,peliculas[idpeli].estreno,peliculas[idpeli].sinopsis,idpeli)" value="update">
+        </form>
+
+        <h1>Tabla Peliculas MIO</h1>
+        <table style="width:100%" border="1">
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Estreno</th>
+            <th>Sinopsis</th>
+            <th>Acciones</th>
+          </tr>
+          <tr v-for="(peli,indice) in filtrarPelicula" >
+            <td>{{ indice}}</td>
+            <td>{{ peli.nombre }}</td>
+            <td>{{ peli.estreno }}</td>
+            <td>{{ peli.sinopsis }}</td>
+            <td><a href="#" @click.prevent="EliminarPelicula(indice)">Eliminar</a><br><a href="#" @click.prevent="FormEditar(indice)">Editar</a></td>
+          </tr>
+        </table>
+       <hr>
+
+
+
+       <hr>
+      <pre>{{$data | json}}</pre>
+    </div>
+	
+  </body>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="js/main.js"></script>
