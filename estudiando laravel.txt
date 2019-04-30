@@ -1,0 +1,407 @@
+ESTUDIANDO LARAVEL
+
+--para crear un proyecto
+desde la carpeta de htdocs escribir el comando
+composer create-project laravel/laravel nombreproyecto
+
+--para arrancar el servidor
+ingresar a cd xampp/htdocs/proyecto
+php artisan serve
+
+--crear archivo para pruebas
+php artisan make:test nombre
+
+--correr pruebas
+vendor/bin/phpunit
+
+--crear controlador
+php artisan make:controller nombre
+
+--migrar base de datos
+php artisan migrate
+
+**Para evitar este error al migrar
+Illuminate\Database\QueryException  : SQLSTATE[42000]: Syntax error or access violation: 1071 Specified key was too long;
+max key length is 767 bytes (SQL: alter table `users` add unique `users_email_unique`(`email`))
+
+Ir a: app/Providers/AppServiceProvider.php y configurar asi:
+
+use Illuminate\Support\Facades\Schema;
+
+public function boot()
+{
+    Schema::defaultStringLength(191);
+}
+**
+
+--cuando tengo campos ya existentes y quiero agregar uno nuevo
+php artisan migrate:reset
+php artisan migrate
+
+--cuando modifico algun campo de la tabla
+php artisan migrate:refresh
+
+--para eliminar todas las tablas y volverlas a crear
+php artisan migrate:fresh
+
+--para ejecutar los seeders
+php artisan db:seed
+
+--para hacer fresh y luego seed
+php artisan migrate:fresh --seed
+
+--para crear una migration
+php artisan make:migration nombre
+
+--para crear un modelo
+php artisan make:model nombredelmodelo
+
+--para modificar algun campo de una tabla--
+<?php
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class CreateProfessionsTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+       Schema::table('users', (Blueprint $table)) {
+	   $table->string('profession', 50)->nullable()->after('password'); //after para cambiar la posicion del campo el la tabla
+
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+       Schema::table('users', function (Blueprint $table) {
+	   $table->dropColumn('profession');
+
+    }
+}
+
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=curso-styde
+DB_USERNAME=julian
+DB_PASSWORD=julian
+
+--para desactivar los campos created_at y updated_at
+ public $timestamps = false;
+ poner en el Model
+
+--crear un seeder
+php artisan make:seeder NombreSeeder(nombre model primera en mayuscula seguido de Seeder)
+registrar el seeder en DatabaseSeeder.php por ejemplo: $this->call(ProfessionSeeder::class);OJO!! ponerlos en orden, primero tablas padres y luego hijas
+
+
+--tinker para interactuar con el ORM De Laravel Eloquent
+php artisan tinker
+
+--para crear registros utilizo factory desde tinker
+ejemplo con tabla users que trae por defecto laravel
+use App\User;
+factory(User::class)->create();
+para crear por ejemplo 50 usuarios
+factory(User::class,50)->create();
+
+para crear factory de otras tablas
+php artisan make:factory porej ProfessionFactory
+
+/****SUPERCOMANDO****/
+--para crear modelo, migracion y factory en una sola linea de comando
+php artisan make:model Nombredelmodelo(primera letra en mayúscula) -mf
+
+***********************INVESTIGAR*****************************************
+
+
+https://fuubar.wordpress.com/2013/07/16/poblar-drop-down-list-desde-la-db-con-laravel/
+
+
+***********************FIN INVESTIGAR*************************************
+
+
+
+****tipos de campos para la BD en la migracion***************
+
+The table builder contains a variety of column types that you may use when building your tables:
+
+Command 									Description
+$table->bigIncrements('id'); 				Incrementing ID using a "big integer" equivalent
+$table->bigInteger('votes'); 				BIGINT equivalent to the table
+$table->binary('data'); 					BLOB equivalent to the table
+$table->boolean('confirmed'); 				BOOLEAN equivalent to the table
+$table->char('name', 4); 					CHAR equivalent with a length
+$table->date('created_at'); 				DATE equivalent to the table
+$table->dateTime('created_at'); 			DATETIME equivalent to the table
+$table->decimal('amount', 5, 2); 			DECIMAL equivalent with a precision and scale
+$table->double('column', 15, 8); 			DOUBLE equivalent with precision, 15 digits in total and 8 after the decimal point
+$table->enum('choices', ['foo', 'bar']); 	ENUM equivalent to the table
+$table->float('amount'); 					FLOAT equivalent to the table
+$table->increments('id'); 					Incrementing ID to the table (primary key)
+$table->integer('votes'); 					INTEGER equivalent to the table
+$table->json('options'); 					JSON equivalent to the table
+$table->jsonb('options'); 					JSONB equivalent to the table
+$table->longText('description'); 			LONGTEXT equivalent to the table
+$table->mediumInteger('numbers'); 			MEDIUMINT equivalent to the table
+$table->mediumText('description'); 			MEDIUMTEXT equivalent to the table
+$table->morphs('taggable'); 				Adds INTEGER taggable_id and STRING taggable_type
+$table->nullableTimestamps(); 				Same as timestamps(), except allows NULLs
+$table->smallInteger('votes'); 				SMALLINT equivalent to the table
+$table->tinyInteger('numbers'); 			TINYINT equivalent to the table
+$table->softDeletes(); 						Adds deleted_at column for soft deletes
+$table->string('email'); 					VARCHAR equivalent column
+$table->string('name', 100); 				VARCHAR equivalent with a length
+$table->text('description'); 				TEXT equivalent to the table
+$table->time('sunrise'); 					TIME equivalent to the table
+$table->timestamp('added_on'); 				TIMESTAMP equivalent to the table
+$table->timestamps(); 						Adds created_at and updated_at columns
+$table->rememberToken(); 					Adds remember_token as VARCHAR(100) NULL
+->nullable() 								Designate that the column allows NULL values
+->default($value) 							Declare a default value for a column
+->unsigned() 								Set INTEGER to UNSIGNED
+
+***para ver las opciones del generador de datos FAKER: https://github.com/fzaninotto/Faker
+
+
+***Laravel Form Builders*****
+https://github.com/kristijanhusak/laravel-form-builder#laravel-5-form-builder
+
+http://clivern.com/how-to-build-forms-with-laravel/
+
+https://medium.com/employbl/create-and-edit-records-form-reuse-in-laravel-5-3-f70a4b1d5f9b
+
+http://kristijanhusak.github.io/laravel-form-builder/field/collection.html
+
+composer require kris/laravel-form-builder
+composer install
+
+Then add Service provider to config/app.php
+
+    'providers' => [
+        // ...
+        Kris\LaravelFormBuilder\FormBuilderServiceProvider::class
+    ]
+
+And Facade (also in config/app.php)
+
+    'aliases' => [
+        // ...
+        'FormBuilder' => Kris\LaravelFormBuilder\Facades\FormBuilder::class
+    ]
+
+Notice: This package will add laravelcollective/html package and load aliases (Form, Html) if they do not exist in the IoC container.
+
+Quick start
+
+Creating form classes is easy. With a simple artisan command:
+
+php artisan make:form Forms/SongForm --fields="name:text, lyrics:textarea, publish:checkbox"
+**Este es mio: php artisan make:form Forms/EstudianteForm --fields="nombres:text, documento:text, fecha_nacimiento:date, programa_id:select"**el programa_id deberia apareces como un combo?
+
+Form is created in path app/Forms/SongForm.php with content:
+
+<?php
+
+namespace App\Forms;
+
+use Kris\LaravelFormBuilder\Form;
+
+class SongForm extends Form
+{
+    public function buildForm()
+    {
+        $this
+            ->add('name', 'text', [
+                'rules' => 'required|min:5'
+            ])
+            ->add('lyrics', 'textarea', [
+                'rules' => 'max:5000'
+            ])
+            ->add('publish', 'checkbox');
+    }
+}
+
+If you want to instantiate empty form without any fields, just skip passing --fields parameter:
+
+php artisan make:form Forms/PostForm
+
+Gives:
+
+<?php
+
+namespace App\Forms;
+
+use Kris\LaravelFormBuilder\Form;
+
+class PostForm extends Form
+{
+    public function buildForm()
+    {
+        // Add fields here...
+    }
+}
+
+After that instantiate the class in the controller and pass it to view:
+
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Routing\Controller as BaseController;
+use Kris\LaravelFormBuilder\FormBuilder;
+
+class SongsController extends BaseController {
+
+    public function create(FormBuilder $formBuilder)
+    {
+        $form = $formBuilder->create(\App\Forms\SongForm::class, [
+            'method' => 'POST',
+            'url' => route('song.store')
+        ]);
+
+        return view('song.create', compact('form'));
+    }
+
+    public function store(FormBuilder $formBuilder)
+    {
+        $form = $formBuilder->create(\App\Forms\SongForm::class);
+
+        if (!$form->isValid()) {
+            return redirect()->back()->withErrors($form->getErrors())->withInput();
+        }
+
+        // Do saving and other things...
+    }
+}
+
+Alternative example:
+
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Routing\Controller as BaseController;
+use Kris\LaravelFormBuilder\FormBuilder;
+use App\Forms\SongForm;
+
+class SongsController extends BaseController {
+
+    public function create(FormBuilder $formBuilder)
+    {
+        $form = $formBuilder->create(SongForm::class, [
+            'method' => 'POST',
+            'url' => route('song.store')
+        ]);
+
+        return view('song.create', compact('form'));
+    }
+
+    public function store(FormBuilder $formBuilder)
+    {
+        $form = $formBuilder->create(SongForm::class);
+
+        if (!$form->isValid()) {
+            return redirect()->back()->withErrors($form->getErrors())->withInput();
+        }
+
+        // Do saving and other things...
+    }
+}
+
+Create the routes
+
+// app/Http/routes.php
+Route::get('songs/create', [
+    'uses' => 'SongsController@create',
+    'as' => 'song.create'
+]);
+
+Route::post('songs', [
+    'uses' => 'SongsController@store',
+    'as' => 'song.store'
+]);
+
+Print the form in view with form() helper function:
+
+<!-- resources/views/song/create.blade.php -->
+
+@extends('app')
+
+@section('content')
+    {!! form($form) !!}
+@endsection
+
+Go to /songs/create; above code will generate this html:
+
+<form method="POST" action="http://example.dev/songs">
+    <input name="_token" type="hidden" value="FaHZmwcnaOeaJzVdyp4Ml8B6l1N1DLUDsZmsjRFL">
+    <div class="form-group">
+        <label for="name" class="control-label">Name</label>
+        <input type="text" class="form-control" id="name">
+    </div>
+    <div class="form-group">
+        <label for="lyrics" class="control-label">Lyrics</label>
+        <textarea name="lyrics" class="form-control" id="lyrics"></textarea>
+    </div>
+    <div class="form-group">
+        <label for="publish" class="control-label">Publish</label>
+        <input type="checkbox" name="publish" id="publish">
+    </div>
+</form>
+
+Or you can generate forms easier by using simple array
+
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Routing\Controller as BaseController;
+use Kris\LaravelFormBuilder\FormBuilder;
+use App\Forms\SongForm;
+
+class SongsController extends BaseController {
+
+    public function create(FormBuilder $formBuilder)
+    {
+        $form = $formBuilder->createByArray([
+                        [
+                            'name' => 'name',
+                            'type' => 'text',
+                        ],
+                        [
+                            'name' => 'lyrics',
+                            'type' => 'textarea',
+                        ], 
+                        [
+                            'name' => 'publish',
+                            'type' => 'checkbox'
+                        ],
+                    ]
+            ,[
+            'method' => 'POST',
+            'url' => route('song.store')
+        ]);
+
+        return view('song.create', compact('form'));
+    }
+}
+
+****FIN Laravel Form Builders*****
+
+
+CURSO LARAVEL + VUE JS
+https://mega.nz/#F!k4pg1JJa!g9r_VDFabUkbz_eun7UpFQ
+contraseña: red-virtual
