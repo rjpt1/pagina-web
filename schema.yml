@@ -1,0 +1,12 @@
+propel:
+  professions:
+    id:           ~
+    title:         { type: varchar(255), required: true }
+ 
+  users:
+    id:           ~
+    profession_id:  { type: integer, foreignTable: professions, foreignReference: id, required: true, onDelete: CASCADE }
+    name:         { type: varchar(255) }
+    email:         { type: varchar(255) }
+ 
+ 
