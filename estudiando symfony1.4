@@ -1,0 +1,44 @@
+symfony generate:project prueba --orm=propel
+symfony generate:app frontend
+
+
+// configurar base de datos, despues de root va la clave (aca esta en blanco por que mi root no tiene clave)
+symfony configure:database "mysql:host=localhost;dbname=jobeet" root
+
+//Si decidiste crear las tablas escribiendo las sentencias SQL, puedes generar el archivo de configuración del esquema correspondiente schema.yml
+symfony propel:build-schema
+
+//La tarea propel:build --sql genera comandos SQL en el directorio data/sql/, optimizado para el motor de base de datos que hemos configurado
+symfony propel:build --sql
+
+//Para crear las tablas en la base de datos
+symfony propel:insert-sql 
+
+//El ORM también genera las clases PHP que mapea los registros de la tabla con los objetos
+symfony propel:build --model
+
+//PARA INSERTAR DATOS EN LA BD crear archivos YAML en el directorio data/fixtures/
+//ejecutar el comando para cargar los datos
+symfony propel:data-load
+
+//Symfony es capaz de generar automáticamente un módulo para un determinado modelo que proporciona las características básicas de manipulación
+symfony propel:generate-module --with-show --non-verbose-templates frontend job JobeetJob
+
+
+--solucion para error
+I'm going step by step by the tutorial. When I want to generate a module for JobeetJob I have the following error
+
+[lszk@asus jobeet]$ php symfony propel:generate-module --with-show --non-verbose-templates frontend job JobeetJob
+PHP Fatal error:  Class 'JobeetJobForm' not found in /home/lszk/public_html/jobeet/lib/vendor/symfony/lib/generator/sfModelGenerator.class.php on line 321
+[?php include_stylesheets_for_form($form) ?]
+[?php include_javascripts_for_form($form) ?]
+
+
+Fatal error: Class 'JobeetJobForm' not found in /home/lszk/public_html/jobeet/lib/vendor/symfony/lib/generator/sfModelGenerator.class.php on line 321
+
+SOLUTION
+Ok, I've got it.
+symfony propel:build-forms
+symfony cache:clear
+And then generate the module.
+
