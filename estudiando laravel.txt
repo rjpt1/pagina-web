@@ -45,7 +45,7 @@ php artisan migrate:refresh
 php artisan migrate:fresh
 
 --para ejecutar los seeders
-php artisan db:seed
+php artisan db:seed (NO OLVIDE REGISTRAR EL SEEDER EN EL ARCHIVO DatabaseSeeder)
 
 --para hacer fresh y luego seed
 php artisan migrate:fresh --seed
