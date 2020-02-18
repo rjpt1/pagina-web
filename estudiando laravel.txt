@@ -132,6 +132,14 @@ https://fuubar.wordpress.com/2013/07/16/poblar-drop-down-list-desde-la-db-con-la
 
 ***********************FIN INVESTIGAR*************************************
 
+*******CREAR LOGIN LARAVEL *******
+php artisan make:auth
+
+
+****VUE******
+vue-select: npm install vue-select (ver https://github.com/sagalbot/vue-select)
+vue-barcode: npm install vue-barcode (ver https://github.com/lindell/vue-barcode)
+
 
 
 ****tipos de campos para la BD en la migracion***************
