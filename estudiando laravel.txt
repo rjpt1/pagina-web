@@ -140,6 +140,32 @@ php artisan make:auth
 vue-select: npm install vue-select (ver https://github.com/sagalbot/vue-select)
 vue-barcode: npm install vue-barcode (ver https://github.com/lindell/vue-barcode)
 
+LARAVEL MIX
+Para integrar todos los css y js del diseño de la plantilla
+	{
+		en la carpeta resources/assets creo carpeta plantilla, detro creo carpeta css y js para poner los archivos del template que se van a compilar con Laravel Mix
+
+		en el archivo webpack.mix.js (está en la raiz del proyecto) se van a crear las intrucciones para compilar todos los archivos css y js, cuyo archivo final es por ejemplo: public/css/all.css
+		instalar larevel mix con el comando: npm install (en el archivo package,json de la raiz estan todas las instrucciones de instalacion del mix)
+
+		npm run dev para compilar una vez
+		npm run watch para compilar automaticamente los cambios
+
+		una vez compilado se modifican los llamados en una sola linea de los css y js en la plantilla blade
+	}
+	
+Componentes de vue
+	{
+		en resources/assets/js el archivo app.js indicamos las rutas de los componentes
+		los componentes los modificamos o creamos en resources/assets/js/components
+		
+		en webpack.mix.json agregamos el compilador .js para los componentes que se compilará en el archivo public/app.js y debemos hacer referencia de este script en el archivo principal.blade
+		agregar la referencia al id del element app (el: #app) (por lo general se hace dentro de un div, asi; <div id="app"></div> aca va lo del footer)
+	}
+
+
+
+****FIN VUE******
 
 
 ****tipos de campos para la BD en la migracion***************
@@ -410,6 +436,3 @@ class SongsController extends BaseController {
 ****FIN Laravel Form Builders*****
 
 
-CURSO LARAVEL + VUE JS
-https://mega.nz/#F!k4pg1JJa!g9r_VDFabUkbz_eun7UpFQ
-contraseña: red-virtual
