@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test API</title>
+</head>
+<body>
+    <script type="text/javascript">
+        let txt = "wartortle";
+        const endpoint = 'https://jsonplaceholder.typicode.com/posts/';
+        const endpoint2 = 'https://pokeapi.co/api/v2/pokemon/144/encounters';
+        
+        fetch(endpoint2)
+        .then(request => request.text())
+        .then(data => console.log(data));
+    </script>
+</body>
+</html>

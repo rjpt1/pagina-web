@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <title>Test API</title>
+</head>
+<body>
+    <label for="textbox_id">escribir:</label>
+    <input type="text" id="textbox_id">
+    <label id="alerta"></label>
+    <button id="btn_cargar">EXECUTE</button>
+    <img src="" alt="" id="imgpok" title="">
+    <script type="text/javascript">
+        let btn = document.getElementById("btn_cargar");
+        btn.addEventListener('click', event => {
+            action();
+        });
+
+
+        function action () {
+            let txt = document.getElementById('textbox_id').value;
+            let img = document.getElementById('imgpok');
+            let resp;
+            let alerta = document.getElementById('alerta');
+            const request = new XMLHttpRequest();
+            const endpoint = 'https://jsonplaceholder.typicode.com/posts/';
+            const endpoint2 = 'https://pokeapi.co/api/v2/pokemon/'+txt;
+            if (txt) {
+                let apiRes = null;
+                let errores = null;
+                (async() => {
+                    try {
+                        apiRes = await axios.get(endpoint2);
+                    } catch (err) {
+                        errores = err.response;
+                    } finally {
+                        alerta.textContent = "";
+
+                        if (!errores) {
+                            img.src = apiRes.data.sprites.front_default;
+                            img.title = apiRes.data.name
+                                        + ' tiene ' + Object.keys(apiRes.data.moves).length + ' movimientos.';
+                        } else {
+                            alerta.textContent = "No hay resultados, por favor escriba un valor valido en la caja de texto.";
+                            img.src = "";
+                        }
+                    }
+                })();
+
+
+            }
+            else {
+                alerta.textContent = "Por favor escriba un valor en la caja de texto.";
+                img.src = "";
+            }
+        }
+    </script>
+</body>
+</html>
